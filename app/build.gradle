@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         NitroKey {
-            keyAlias 'Nitroman'
-            keyPassword '2500125002'
+            keyAlias ''
+            keyPassword ''
             storeFile file('C:/Users/Nitro/Desktop/android keystore/Nitroman.jks')
-            storePassword 'Dark@Man123'
+            storePassword ''
         }
     }
     compileSdkVersion 24
