@@ -119,7 +119,7 @@
         android:text="Upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="409dp"
+        android:layout_marginTop="419dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/upload"
         android:onClick="upload"
@@ -160,13 +160,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/verifyCode"
-        android:width="150px"
-        android:height="80px"
-        android:minWidth="50px"
-        android:minHeight="50px"
+        android:width="280px"
+        android:height="120px"
+        android:minWidth="250px"
+        android:minHeight="100px"
+        android:onClick="verify"
         android:layout_alignTop="@+id/passCode2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="41dp"
-        android:onClick="verify"
-        />
+        android:layout_marginTop="40dp" />
 </RelativeLayout>
