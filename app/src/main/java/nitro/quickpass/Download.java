@@ -16,8 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
-import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -30,8 +28,13 @@ public class Download extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
         setupUI(findViewById(R.id.activity_download));
-
-        if (Build.VERSION.SDK_INT >= 23)
+        /*
+        To check if we have permission to write to storage or not
+        If we already have permission nothing happens ( checkPermission() will return true.
+        If we do not have permission the "requestPermission()" will be called which it will
+        request permission from user with a pop up .
+         */
+        if (Build.VERSION.SDK_INT >= 23)//This feature is only supported in android api 23 and above
         {
             if (checkPermission())
             {
@@ -42,9 +45,8 @@ public class Download extends AppCompatActivity {
         }
         else
         {
-
-            // Code for Below 23 API Oriented Device
-            // Do next code
+            //This deivce api is lower than 23 which mean declaring permission in the
+            //Android Manifest is enough .
         }
 
     }
@@ -52,33 +54,56 @@ public class Download extends AppCompatActivity {
 
 
 
+    /*
+        This function will be called when the Download Button is clicked
+        and Here is what happens :
+        1-We take the entered passcode by findViewById .
+        2-We call an Async task called "GetSessionIDAsyncTask()" which will connect
+        to the server for creating the session and will return the session ID .
+        Please note this is an Async Task and it's a must for this kind of tasks
+        which is works in the background in another thread so the UI does not freaze.
 
+        3-if the session ID (res for response) is "1" that means the passcode is wrong
+        therefor a toast will pop up saying that .
+
+        4-if it's not then we proceed to download the file using the DownloadManager lib
+
+     */
     public void download(View v) throws Exception{
         EditText passcode = (EditText)findViewById(R.id.passCode);
         String res = new GetSessionIDAsyncTask().execute(passcode.getText().toString()).get();
 
 
-
-        String url = "https://quickpass.azurewebsites.net/Quick_Pass/FileServlet/"+res;
-        String nameOfFile =new GetFileNameAsyncTask().execute(url).get();
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setDescription("Quick Pass Downloading now");
-        request.setTitle(nameOfFile);
-        // in order for this if to run, you must use the android 3.2 to compile your app
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        if(res.equals("1")){
+            Toast toast = Toast.makeText(this,"Your Passcode does not exist",Toast.LENGTH_SHORT);
+            toast.show();
         }
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,nameOfFile);
+        else {
+            String url = "https://quickpass.azurewebsites.net/Quick_Pass/FileServlet/" + res;
+            String nameOfFile = new GetFileNameAsyncTask().execute(url).get();
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            request.setDescription("Quick Pass Downloading now");
+            request.setTitle(nameOfFile);
+            // in order for this if to run, you must use the android 3.2 to compile your app
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            }
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, nameOfFile);
 
-        // get download service and enqueue file
-        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(this,nameOfFile,Toast.LENGTH_SHORT);
-        toast.show();
+            // get download service and enqueue file
+            DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            manager.enqueue(request);
+            Toast toast = Toast.makeText(this, nameOfFile+" , Has been downloaded", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
+
+    /*
+        This to remove the softkeyboard whenever you click
+        done on the softkeybaord or you click outside.
+     */
     public  void hideSoftKeyboard() {
         InputMethodManager inputMethodManager =
                 (InputMethodManager) this.getSystemService(
@@ -88,6 +113,10 @@ public class Download extends AppCompatActivity {
         EditText passcode = (EditText)findViewById(R.id.passCode);
         passcode.clearFocus();
     }
+
+    /*
+        This will run at the start to assign the hideSoftKeyboard to the layout
+     */
     public void setupUI(View view) {
 
         // Set up touch listener for non-text box views to hide keyboard.
@@ -108,6 +137,9 @@ public class Download extends AppCompatActivity {
         }
     }
 
+    /*
+        explained above .
+     */
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (result == PackageManager.PERMISSION_GRANTED) {

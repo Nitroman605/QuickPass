@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.view.WindowManager;
 
 
-
+    /*
+        This is just for the splash screen . It will show the splash_screen layout
+        for 3 seconds ( sleep(3000);) and will move on to the download
+        Activity .
+    */
 public class SplashScreen extends Activity {
 
     @Override
@@ -14,7 +18,7 @@ public class SplashScreen extends Activity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);//To make it full screen
         setContentView(R.layout.splash_screen);
 
         Thread timerThread = new Thread(){

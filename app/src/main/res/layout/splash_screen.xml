@@ -15,5 +15,7 @@
         android:contentDescription="Logo Image"
         android:id="@+id/imageView"
         android:layout_centerVertical="true"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:background="@android:color/transparent"
+        />
 </RelativeLayout >

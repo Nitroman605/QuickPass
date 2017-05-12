@@ -112,6 +112,7 @@
         android:textAlignment="center"
         android:textSize="18sp"
         android:cursorVisible="false"
+
         />
 
     <Button
@@ -133,7 +134,8 @@
         android:layout_alignBaseline="@+id/upload"
         android:layout_alignBottom="@+id/upload"
         android:layout_alignEnd="@+id/tableLayout"
-        android:layout_marginEnd="14dp" />
+        android:layout_marginEnd="14dp"
+        android:onClick="toggleEmail" />
     <EditText
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -151,5 +153,20 @@
         android:textSize="18sp"
         android:cursorVisible="false"
         android:visibility="invisible"
+        />
+
+    <Button
+        android:text="Check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/verifyCode"
+        android:width="150px"
+        android:height="80px"
+        android:minWidth="50px"
+        android:minHeight="50px"
+        android:layout_alignTop="@+id/passCode2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="41dp"
+        android:onClick="verify"
         />
 </RelativeLayout>
