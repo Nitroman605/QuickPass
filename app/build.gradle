@@ -1,14 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        NitroKey {
-            keyAlias 'Nitroman'
-            keyPassword '2500125002'
-            storeFile file('C:/Users/Nitro/Desktop/android keystore/Nitroman.jks')
-            storePassword 'Dark@Man123'
-        }
-    }
+    
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     defaultConfig {
@@ -23,7 +16,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.NitroKey
         }
     }
     useLibrary 'org.apache.http.legacy'
