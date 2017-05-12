@@ -22,7 +22,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class Download extends AppCompatActivity {
+
     private static final int PERMISSION_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,7 +122,7 @@ public class Download extends AppCompatActivity {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Toast.makeText(this, "Write External Storage permission allows us to Download from Quick Pass Server , Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},PERMISSION_REQUEST_CODE);
         }
     }
 
