@@ -3,9 +3,12 @@ package nitro.quickpass;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
@@ -44,8 +47,15 @@ public class Upload extends Activity {
     EditText email;
     CheckBox emailSend;
     Button upload;
+    Cursor returnCursor;
+    boolean isImage = false;
+    int nameIndex;
+    int sizeIndex;
+    int pathIndex;
 
-
+    String imageName;
+    long imageSize;
+    String imagePath;
 
     TextView fileName;
     TextView fileSize;
@@ -77,20 +87,51 @@ public class Upload extends Activity {
             // Code for Below 23 API Oriented Device
             // Do next code
         }
-
-        //Get the file URL in the local system , this is passed by the OS
-        uri = ShareCompat.IntentReader.from(this).getStream();
-        //Create object file and it points to the file selected by the user.
-        f = new File(uri.getPath());
         //We get the Text Elements ( view) that is on the screen
         //so later we can write into it the file information
         fileName = (TextView)findViewById(R.id.fileName);
         fileSize = (TextView)findViewById(R.id.fileSize);
         filePath = (TextView)findViewById(R.id.filePath);
-        //Writing the file information in the screen.
-        fileName.setText(f.getName());
-        fileSize.setText( String.format("%.02f",f.length()/1024.0/1024.0)+" Mb");
-        filePath.setText(f.getPath());
+        //Get the file URL in the local system , this is passed by the OS
+        uri = ShareCompat.IntentReader.from(this).getStream();
+        if(getIntent().getType().toString().indexOf("image/") ==0){
+            returnCursor =
+                    getContentResolver().query(uri, null, null, null, null);
+            nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+            pathIndex = returnCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            returnCursor.moveToFirst();
+
+            imageName =returnCursor.getString(nameIndex);
+            imageSize = returnCursor.getLong(sizeIndex);
+            imagePath= returnCursor.getString(pathIndex);
+
+            returnCursor.close();
+
+            fileName.setText(imageName);
+            fileSize.setText(String.format("%.02f",1.0*imageSize/1024.0/1024.0)+" Mb");
+            filePath.setText(imagePath);
+
+            isImage = true;
+        }
+        else{
+            /*
+                * Get the column indexes of the data in the Cursor,
+                * move to the first row in the Cursor, get the data,
+                * and display it.
+             */
+
+
+            //Create object file and it points to the file selected by the user.
+            f = new File(uri.getPath());
+
+            //Writing the file information in the screen.
+            fileName.setText(f.getName());
+            fileSize.setText(String.format("%.02f",1.0*f.length()/1024.0/1024.0)+" Mb");
+            filePath.setText(f.getPath());
+        }
+
+
 
         //Geting these elements
         passcode = (EditText)findViewById(R.id.passCode2);
@@ -146,19 +187,38 @@ public class Upload extends Activity {
      */
     public void upload(View v){
         try {
-            String uploadId =
-                    new MultipartUploadRequest(this.getApplicationContext(), "https://quickpass.azurewebsites.net/Quick_Pass/NewFileUpload")
-                            .addFileToUpload(f.getPath(), "filename")
-                            .setNotificationConfig(new UploadNotificationConfig())
-                            .setMaxRetries(2)
-                            .addHeader("code",passcode.getText().toString())
-                            .addHeader("size",(f.length()/1024)+"")
-                            .addHeader("email",returnEmail())
-                            .startUpload();
-            upload.setVisibility(Button.INVISIBLE);
-            passcode.setEnabled(false);
-            email.setEnabled(false);
-            Toast.makeText(this, "Your upload has been started , you can close this screen", Toast.LENGTH_LONG).show();
+            if(isImage){
+                String uploadId =
+                        new MultipartUploadRequest(this.getApplicationContext(), "https://quickpass.azurewebsites.net/Quick_Pass/NewFileUpload")
+                                .addFileToUpload(imagePath, "filename")
+                                .setNotificationConfig(new UploadNotificationConfig())
+                                .setMaxRetries(2)
+                                .addHeader("code", passcode.getText().toString())
+                                .addHeader("size", (imageSize/1024) + "")
+                                .addHeader("email", returnEmail())
+                                .startUpload();
+                upload.setVisibility(Button.INVISIBLE);
+                passcode.setEnabled(false);
+                email.setEnabled(false);
+                Toast.makeText(this, "Your upload has been started , you can close this screen", Toast.LENGTH_LONG).show();
+            }
+            else {
+
+
+                String uploadId =
+                        new MultipartUploadRequest(this.getApplicationContext(), "https://quickpass.azurewebsites.net/Quick_Pass/NewFileUpload")
+                                .addFileToUpload(f.getPath(), "filename")
+                                .setNotificationConfig(new UploadNotificationConfig())
+                                .setMaxRetries(2)
+                                .addHeader("code", passcode.getText().toString())
+                                .addHeader("size", (f.length() / 1024) + "")
+                                .addHeader("email", returnEmail())
+                                .startUpload();
+                upload.setVisibility(Button.INVISIBLE);
+                passcode.setEnabled(false);
+                email.setEnabled(false);
+                Toast.makeText(this, "Your upload has been started , you can close this screen", Toast.LENGTH_LONG).show();
+            }
         } catch (Exception exc) {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
@@ -171,7 +231,7 @@ public class Upload extends Activity {
             return email.getText().toString();
         }
         else{
-            return null;
+            return "1";
         }
     }
 
@@ -205,6 +265,5 @@ public class Upload extends Activity {
             return false;
         }
     }
-
 
 }
