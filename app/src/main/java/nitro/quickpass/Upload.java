@@ -1,27 +1,28 @@
 package nitro.quickpass;
 
 import android.app.Activity;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import net.gotev.uploadservice.MultipartUploadRequest;
@@ -32,14 +33,16 @@ import net.gotev.uploadservice.okhttp.OkHttpStack;
 import java.io.File;
 
 
+
 import okhttp3.OkHttpClient;
+
+
 
 /*
     This activity only starts when user select our app in the send/share screen for a file.
  */
 public class Upload extends Activity {
     private static final int PERMISSION_REQUEST_CODE = 2;
-    Intent receivedIntent;
     File f;
     Uri uri;
     EditText passcode;
@@ -56,23 +59,16 @@ public class Upload extends Activity {
     long imageSize;
     String imagePath;
     long realFileSizeByte;
-    String realFileSize;
     TextView fileName;
     TextView fileSize;
     TextView filePath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload);
-        LinearLayout layout = (LinearLayout)findViewById(R.id.main_upload);
-        layout.setBackground(getResources().getDrawable(R.drawable.background));
-        /*
-        To check if we have permission to read from storage or not
-        If we already have permission nothing happens ( checkPermission() will return true.
-        If we do not have permission the "requestPermission()" will be called which it will
-        request permission from user with a pop up .
-         */
+
         if (Build.VERSION.SDK_INT >= 23)
         {
             if (checkPermission())
@@ -105,7 +101,7 @@ public class Upload extends Activity {
 
             imageName =returnCursor.getString(nameIndex);
             imageSize = returnCursor.getLong(sizeIndex);
-            imagePath= returnCursor.getString(pathIndex);
+            imagePath= getPathFromUri(getApplicationContext(),uri);
 
             returnCursor.close();
 
@@ -114,22 +110,19 @@ public class Upload extends Activity {
             filePath.setText(imagePath);
 
             isImage = true;
+
         }
+
         else{
-            returnCursor =
-                    getContentResolver().query(uri, null, null, null, null);
 
-            sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-
-            returnCursor.moveToFirst();
 
             //Create object file and it points to the file selected by the user.
-            f = new File(uri.getPath());
-            realFileSizeByte = returnCursor.getLong(sizeIndex);
-            realFileSize = String.format("%.02f",1.0*realFileSizeByte/1024.0/1024.0)+" Mb";
-            //Writing the file information in the screen.
+            String realPath = getPathFromUri(getApplicationContext(),uri);
+
+            f = new File(realPath);
             fileName.setText(f.getName());
-            fileSize.setText(realFileSize);
+
+            fileSize.setText(String.format("%.02f",1.0*f.length()/1024.0/1024.0)+" Mb");
             filePath.setText(f.getPath());
         }
 
@@ -277,6 +270,130 @@ public class Upload extends Activity {
         } else {
             return false;
         }
+    }
+
+
+    public static String getPathFromUri(final Context context, final Uri uri) {
+
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+
+
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                return getDataColumn(context, contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[] {
+                        split[1]
+                };
+
+                return getDataColumn(context, contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+            // Return the remote address
+            if (isGooglePhotosUri(uri))
+                return uri.getLastPathSegment();
+
+            return getDataColumn(context, uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
+    public static String getDataColumn(Context context, Uri uri, String selection,
+                                       String[] selectionArgs) {
+
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is ExternalStorageProvider.
+     */
+    public static boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is MediaProvider.
+     */
+    public static boolean isMediaDocument(Uri uri) {
+        return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is Google Photos.
+     */
+    public static boolean isGooglePhotosUri(Uri uri) {
+        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
 }
