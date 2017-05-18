@@ -3,15 +3,18 @@ package nitro.quickpass;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +24,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadService;
@@ -53,7 +55,8 @@ public class Upload extends Activity {
     String imageName;
     long imageSize;
     String imagePath;
-
+    long realFileSizeByte;
+    String realFileSize;
     TextView fileName;
     TextView fileSize;
     TextView filePath;
@@ -63,7 +66,7 @@ public class Upload extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload);
         LinearLayout layout = (LinearLayout)findViewById(R.id.main_upload);
-        layout.setBackground(getDrawable(R.drawable.background));
+        layout.setBackground(getResources().getDrawable(R.drawable.background));
         /*
         To check if we have permission to read from storage or not
         If we already have permission nothing happens ( checkPermission() will return true.
@@ -113,19 +116,20 @@ public class Upload extends Activity {
             isImage = true;
         }
         else{
-            /*
-                * Get the column indexes of the data in the Cursor,
-                * move to the first row in the Cursor, get the data,
-                * and display it.
-             */
+            returnCursor =
+                    getContentResolver().query(uri, null, null, null, null);
 
+            sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+
+            returnCursor.moveToFirst();
 
             //Create object file and it points to the file selected by the user.
             f = new File(uri.getPath());
-
+            realFileSizeByte = returnCursor.getLong(sizeIndex);
+            realFileSize = String.format("%.02f",1.0*realFileSizeByte/1024.0/1024.0)+" Mb";
             //Writing the file information in the screen.
             fileName.setText(f.getName());
-            fileSize.setText(String.format("%.02f",1.0*f.length()/1024.0/1024.0)+" Mb");
+            fileSize.setText(realFileSize);
             filePath.setText(f.getPath());
         }
 
@@ -220,7 +224,7 @@ public class Upload extends Activity {
                                 .setNotificationConfig(new UploadNotificationConfig())
                                 .setMaxRetries(2)
                                 .addHeader("code", passcode.getText().toString())
-                                .addHeader("size", (f.length() / 1024) + "")
+                                .addHeader("size", (realFileSizeByte / 1024) + "")
                                 .addHeader("email", returnEmail())
                                 .startUpload();
                 upload.setVisibility(Button.INVISIBLE);

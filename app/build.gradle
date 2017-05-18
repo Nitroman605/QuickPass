@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-
+    signingConfigs {
+    }
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "nitro.quickpass"
-        minSdkVersion 21
+        minSdkVersion 20
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -36,5 +37,4 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'net.gotev:uploadservice:3.2.3'
     compile 'net.gotev:uploadservice-okhttp:3.2.3'
-    compile 'com.android.support:percent:24.2.1'
 }
