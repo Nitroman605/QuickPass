@@ -12,5 +12,8 @@
         android:state_enabled="true"
         android:drawable="@drawable/textfield_normal">
     </item>
-
+    <item
+        android:state_enabled="false"
+        android:drawable="@drawable/textfield_disabled">
+        </item>
 </selector>

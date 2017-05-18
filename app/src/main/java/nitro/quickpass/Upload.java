@@ -12,16 +12,13 @@ import android.provider.OpenableColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +62,8 @@ public class Upload extends Activity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload);
-
+        LinearLayout layout = (LinearLayout)findViewById(R.id.main_upload);
+        layout.setBackground(getDrawable(R.drawable.background));
         /*
         To check if we have permission to read from storage or not
         If we already have permission nothing happens ( checkPermission() will return true.
@@ -145,6 +143,8 @@ public class Upload extends Activity {
         UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
         OkHttpClient client = new OkHttpClient(); // create your own OkHttp client
         UploadService.HTTP_STACK = new OkHttpStack(client); // make the library use your own OkHttp client
+
+
     }
 
     /*
@@ -154,20 +154,25 @@ public class Upload extends Activity {
     public void verify(View v) throws Exception {
         String code = passcode.getText().toString();
         Toast toast;
-
-        String response = new VerifyCodeAsyncTask().execute(code).get();
-
-
-        if(response.equals("1")){
-
-            upload.setEnabled(true);
-            toast = Toast.makeText(this,"Your Passcode is Good !",Toast.LENGTH_SHORT);
+        if(code.isEmpty()){
+            upload.setEnabled(false);
+            toast = Toast.makeText(this,"Please enter a passcode!",Toast.LENGTH_LONG);
             toast.show();
         }
-        else{
-            upload.setEnabled(false);
-            toast = Toast.makeText(this,"Your Passcode is already Used !",Toast.LENGTH_LONG);
-            toast.show();
+        else {
+            String response = new VerifyCodeAsyncTask().execute(code).get();
+
+
+            if (response.equals("1")) {
+
+                upload.setEnabled(true);
+                toast = Toast.makeText(this, "Your Passcode is Good !", Toast.LENGTH_SHORT);
+                toast.show();
+            } else {
+                upload.setEnabled(false);
+                toast = Toast.makeText(this, "Your Passcode is already Used !", Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
     }
     /*
@@ -176,10 +181,14 @@ public class Upload extends Activity {
      */
     public void toggleEmail(View v){
         if(emailSend.isChecked()){
-            email.setVisibility(EditText.VISIBLE);
+            email.setEnabled(true);
+            email.setInputType(InputType.TYPE_CLASS_TEXT);
+
         }
         else{
-            email.setVisibility(EditText.INVISIBLE);
+            email.setEnabled(false);
+            email.setInputType(InputType.TYPE_NULL);
+            email.clearFocus();
         }
     }
     /*

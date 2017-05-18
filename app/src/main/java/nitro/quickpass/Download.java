@@ -94,7 +94,7 @@ public class Download extends AppCompatActivity {
             // get download service and enqueue file
             DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
             manager.enqueue(request);
-            Toast toast = Toast.makeText(this, nameOfFile+" , Has been downloaded", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(this, nameOfFile+" , is Now Downloading", Toast.LENGTH_SHORT);
             toast.show();
         }
     }

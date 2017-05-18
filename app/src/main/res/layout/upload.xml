@@ -1,171 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1"
-    android:id="@+id/upload_activity"
-    tools:context=".Upload"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="3"
+    android:id="@+id/main_upload"
+    android:background="@drawable/background"
     >
 
-    <TableLayout
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="37dp"
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
         android:background="@drawable/table_border"
-        android:layout_marginLeft="10px"
-        android:layout_marginRight="15dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/tableLayout">
+        android:weightSum="3"
+        >
 
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            >
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:weightSum="3"
+            >
             <TextView
                 android:text="File Name :"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/Name_Tag"
-                android:layout_marginLeft="70px"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_weight="0.25"
+                android:padding="20px" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/fileName"
-                android:layout_marginLeft="10px"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:padding="20px"
+                android:layout_weight="2.75"
                 android:maxWidth="200dp"
                 />
-        </TableRow>
 
+        </TableRow>
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:weightSum="3">
 
             <TextView
                 android:text="File Size : "
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/Size_Tag"
-                android:layout_marginLeft="70px"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp" />
+                android:layout_weight="0.25"
+                android:padding="20px" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/fileSize"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
+                android:padding="20px"
+                android:layout_weight="2.75"
                 android:maxWidth="200dp"/>
         </TableRow>
-
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:weightSum="3">
             <TextView
                 android:text="File Location :"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/Path_Tag"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="70px"
-                android:layout_marginTop="20dp" />
+                android:padding="20px"
+                android:layout_weight="0.25"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/filePath"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
+                android:padding="20px"
+                android:layout_weight="2.75"
                 android:maxWidth="200dp"/>
+   ``
         </TableRow>
 
+        </TableLayout>
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="400dp"
+
+        android:layout_weight="1"
+        android:background="@drawable/table_border"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </TableLayout>
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent">
+        <EditText
+            android:layout_width="290dp"
+            android:layout_height="fill_parent"
+            android:inputType="textPersonName"
+            android:id="@+id/passCode2"
+            android:background="@drawable/textfield_style"
+            android:hint="Enter Passcode for your file"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:cursorVisible="false"
+            />
+            <Button
+                android:text="Check"
+                android:textColor="#FFFFFF"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/verifyCode"
+                android:background="@drawable/button_enabled"
+                android:onClick="verify"
+                android:layout_alignTop="@+id/passCode2"
+                android:layout_marginLeft="4dp"
 
-    <EditText
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/passCode2"
-        android:background="@drawable/textfield_style"
-        android:hint="Enter Passcode for your file"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="250dp"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:cursorVisible="false"
+            />
+        </TableRow>
 
-        />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@drawable/table_border"
+        android:weightSum="2">
+        <TableLayout
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:layout_weight="2"
+            android:weightSum="2"
+            >
 
-    <Button
-        android:text="Upload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="419dp"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/upload"
-        android:onClick="upload"
-        android:enabled="false"
-        />
+            <TableRow
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:paddingTop="5pt"
+                android:paddingLeft="2dp"
+                android:weightSum="2"
+                >
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1.75"
+                    android:inputType="textPersonName"
+                    android:id="@+id/email"
+                    android:background="@drawable/textfield_style"
+                    android:hint="Enter Your Email"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:cursorVisible="false"
+                    android:enabled="false"
 
-    <CheckBox
-        android:text="Send Email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sendEmail"
-        android:layout_alignBaseline="@+id/upload"
-        android:layout_alignBottom="@+id/upload"
-        android:layout_alignEnd="@+id/tableLayout"
-        android:layout_marginEnd="14dp"
-        android:onClick="toggleEmail" />
-    <EditText
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/email"
-        android:background="@drawable/textfield_style"
-        android:hint="Enter Your Email"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="60dp"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:cursorVisible="false"
-        android:visibility="invisible"
-        />
+                    />
+                <CheckBox
+                    android:text="Send  Email"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.25"
+                    android:id="@+id/sendEmail"
+                    android:onClick="toggleEmail" />
+            </TableRow>
+                <TableRow
+                    >
+                    <View
+                        android:layout_height="0dp"
+                        android:layout_width="0dp"
+                        ></View>
+                    <Button
 
-    <Button
-        android:text="Check"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/verifyCode"
-        android:width="280px"
-        android:height="120px"
-        android:minWidth="250px"
-        android:minHeight="100px"
-        android:onClick="verify"
-        android:layout_alignTop="@+id/passCode2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp" />
-</RelativeLayout>
+                        android:text="Upload"
+                        android:textColor="#FFFFFF"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/upload"
+                        android:onClick="upload"
+                        android:enabled="false"
+                        android:background="@drawable/button_style"
+
+                        />
+                    <View
+                        android:layout_height="0dp"
+                        android:layout_width="0dp"
+                        ></View>
+                </TableRow>
+
+
+
+        </TableLayout>
+
+        </TableRow>
+</LinearLayout>

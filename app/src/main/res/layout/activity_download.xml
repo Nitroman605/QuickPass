@@ -10,7 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nitro.quickpass.Download"
     android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:background="@drawable/background">
 
     <EditText
         android:layout_width="wrap_content"
@@ -36,6 +37,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/download"
-        android:onClick="download" />
+        android:onClick="download"
+        android:background="@drawable/button_enabled"/>
 
 </RelativeLayout>

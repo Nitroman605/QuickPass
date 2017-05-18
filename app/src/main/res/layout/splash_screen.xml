@@ -11,7 +11,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/quick_pass_logo"
+        android:src="@drawable/quickpass_logo"
         android:contentDescription="Logo Image"
         android:id="@+id/imageView"
         android:layout_centerVertical="true"
