@@ -180,26 +180,19 @@
             </TableRow>
                 <TableRow
                     >
-                    <View
-                        android:layout_height="0dp"
-                        android:layout_width="0dp"
-                        ></View>
                     <Button
-
+                        android:layout_marginLeft="135dp"
                         android:text="Upload"
                         android:textColor="#FFFFFF"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="90dp"
+                        android:layout_height="70dp"
                         android:id="@+id/upload"
                         android:onClick="upload"
                         android:enabled="false"
                         android:background="@drawable/button_style"
 
                         />
-                    <View
-                        android:layout_height="0dp"
-                        android:layout_width="0dp"
-                        ></View>
+
                 </TableRow>
 
 
