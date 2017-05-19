@@ -217,7 +217,7 @@ public class Upload extends Activity {
                                 .setNotificationConfig(new UploadNotificationConfig())
                                 .setMaxRetries(2)
                                 .addHeader("code", passcode.getText().toString())
-                                .addHeader("size", (realFileSizeByte / 1024) + "")
+                                .addHeader("size", (f.length() / 1024) + "")
                                 .addHeader("email", returnEmail())
                                 .startUpload();
                 upload.setVisibility(Button.INVISIBLE);
